@@ -83,6 +83,24 @@ JOIN
 	INNER JOIN stanze
 	ON prenotazioni.stanza_id = stanze.id
 	WHERE stanze.floor = 1
+5)Prendi i dati di fatturazione per la prenotazione con id=7
+	SELECT paganti.name, paganti.lastname, paganti.address, pagamenti.price
+	FROM paganti
+	INNER JOIN pagamenti
+	ON pagamenti.pagante_id = paganti.id
+	INNER JOIN prenotazioni
+	ON pagamenti.prenotazione_id = prenotazioni.id
+	WHERE prenotazioni.id = 7
+6)Le stanze sono state tutte prenotate almeno una volta? (Visualizzare le stanze non ancora prenotate)
+	SELECT *
+	FROM stanze
+	LEFT JOIN prenotazioni
+	ON prenotazioni.stanza_id = stanze.id
+	WHERE prenotazioni.stanza_id IS NULL
+
+	
+	
+
 
 
 
