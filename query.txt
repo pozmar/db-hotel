@@ -22,9 +22,8 @@
 	WHERE document_type = 'Driver License'
 	AND date_of_birth like '1975%'
 8)Quanti paganti sono anche ospiti?
-	SELECT * FROM ospiti
-	WHERE name = 'paganti.name'
-	AND lastname = 'paganti.lastname'
+	SELECT COUNT (ospite_id)
+	FROM paganti
 9)Quanti posti letto ha l’hotel in totale?
 	SELECT SUM(beds)
 	FROM stanze
@@ -42,4 +41,56 @@ GROUP BY
 	SELECT stanza_id, COUNT(*) 
 	FROM prenotazioni 
 	GROUP BY stanza_id
+4)Fai una analisi per vedere se ci sono ore in cui le prenotazioni sono più frequenti
+	SELECT HOUR(created_at), COUNT(*) as pren_hour
+	FROM prenotazioni
+	GROUP BY HOUR(created_at)
+	ORDER BY pren_hour DESC LIMIT 5
+	
+5)Quante prenotazioni ha fatto l’ospite che ha fatto più prenotazioni?
+	SELECT HOUR (created_at), COUNT(stanza_id) 
+	FROM prenotazioni 
+	GROUP BY HOUR (created_at)
+	ORDER BY COUNT(stanza_id) DESC
+
+JOIN
+1)Come si chiamano gli ospiti che hanno fatto più di due prenotazioni?
+	SELECT ospiti.name, ospiti.lastname, ospiti.id COUNT(*)
+	FROM ospiti
+	JOIN prenotazioni_has_ospiti
+	ON ospiti.id = prenotazioni_has_ospiti.ospite_id
+	GROUP BY ospiti.id HAVING COUNT(*) > 2
+2)Stampare tutti gli ospiti per ogni prenotazione
+	SELECT ospiti.name, ospiti.lastname, ospiti.id as 'ospite', prenotazioni_has_ospiti.prenotazione_id as 'prenotazione'
+	FROM ospiti
+	INNER JOIN prenotazioni_has_ospiti
+	ON ospiti.id = prenotazioni_has_ospiti.ospite_id
+3)Stampare Nome, Cognome, Prezzo e Pagante per tutte le prenotazioni fatte a Maggio 2018
+	SELECT ospiti.name, ospiti.lastname, ospiti.id as 'ospite', prenotazioni_has_ospiti.prenotazione_id as 'prenotazione',
+	pagamenti.id as 'pagamento', pagamenti.price, paganti.name, paganti.lastname
+	FROM ospiti
+	INNER JOIN prenotazioni_has_ospiti 
+	ON ospiti.id = prenotazioni_has_ospiti.ospite_id
+	INNER JOIN pagamenti
+	ON prenotazioni_has_ospiti.prenotazione_id = pagamenti.prenotazione_id
+	INNER JOIN paganti 
+	ON pagamenti.pagante_id = paganti.id
+4)Fai la somma di tutti i prezzi delle prenotazioni per le stanze del primo piano
+	SELECT SUM(pagamenti.price)
+	FROM pagamenti
+	INNER JOIN prenotazioni
+	ON pagamenti.prenotazione_id = prenotazioni.id
+	INNER JOIN stanze
+	ON prenotazioni.stanza_id = stanze.id
+	WHERE stanze.floor = 1
+
+
+
+	
+	
+	
+
+	
+	
+	
 	
